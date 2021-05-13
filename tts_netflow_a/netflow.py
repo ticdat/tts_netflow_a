@@ -10,20 +10,30 @@ from ticdat import TicDatFactory, Slicer
 
 # ------------------------ define the input schema --------------------------------
 input_schema = TicDatFactory (
-    nodes=[["Name"], ["Inflow"]],
-    arcs= [["Source", "Destination"], ["Cost", "Capacity"]],
+    commodities=[["Name"], ["Volume"]],
+    nodes=[["Name"], []],
+    arcs=[["Source", "Destination"], ["Capacity"]],
+    cost=[["Commodity", "Source", "Destination"], ["Cost"]],
+    inflow=[["Commodity", "Node"], ["Quantity"]]
 )
 
 # Define the foreign key relationships
 input_schema.add_foreign_key("arcs", "nodes", ['Source', 'Name'])
 input_schema.add_foreign_key("arcs", "nodes", ['Destination', 'Name'])
+input_schema.add_foreign_key("cost", "nodes", ['Source', 'Name'])
+input_schema.add_foreign_key("cost", "nodes", ['Destination', 'Name'])
+input_schema.add_foreign_key("cost", "commodities", ['Commodity', 'Name'])
+input_schema.add_foreign_key("inflow", "commodities", ['Commodity', 'Name'])
+input_schema.add_foreign_key("inflow", "nodes", ['Node', 'Name'])
 
 # Define the data types
+input_schema.set_data_type("commodities", "Volume", min=0, max=float("inf"),
+                           inclusive_min=False, inclusive_max=False)
 input_schema.set_data_type("arcs", "Capacity", min=0, max=float("inf"),
                            inclusive_min=True, inclusive_max=True)
-input_schema.set_data_type("arcs", "Cost", min=0, max=float("inf"),
+input_schema.set_data_type("cost", "Cost", min=0, max=float("inf"),
                            inclusive_min=True, inclusive_max=False)
-input_schema.set_data_type("nodes", "Inflow", min=-float("inf"), max=float("inf"),
+input_schema.set_data_type("inflow", "Quantity", min=-float("inf"), max=float("inf"),
                            inclusive_min=False, inclusive_max=False)
 
 # The default-default of zero makes sense everywhere except for Capacity
@@ -32,7 +42,7 @@ input_schema.set_default_value("arcs", "Capacity", float("inf"))
 
 # ------------------------ define the output schema -------------------------------
 solution_schema = TicDatFactory(
-        flow=[["Source", "Destination"], ["Quantity"]],
+        flow=[["Commodity", "Source", "Destination"], ["Quantity"]],
         parameters=[["Parameter"], ["Value"]])
 # ---------------------------------------------------------------------------------
 
