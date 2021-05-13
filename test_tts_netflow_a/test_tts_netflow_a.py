@@ -19,11 +19,13 @@ def _nearly_same(x, y, epsilon=1e-5):
     if min(abs(x), abs(y)) > epsilon:
         return abs(x-y) /  min(abs(x), abs(y)) < epsilon
 
-def _smaller(x, y, epsilon=1e-5):
-    return x < y and not _nearly_same(x, y, epsilon)
-
 class TestNetflow(unittest.TestCase):
-    pass
+    def test_netflow_flows_figure_5(self):
+        # Pulled from here https://bit.ly/3uLt01I (originally from Ahuja, Magnanti, and Orlin book 1993)
+        dat = get_test_data("netflow_flows_figure_5.json")
+        sln = tts_netflow_a.solve(dat)
+        # Objective = 270 can be read directly from https://bit.ly/3uLt01I
+        self.assertTrue(_nearly_same(270, sln.parameters["Total Cost"]["Value"]))
 
 # Run the tests via the command line
 if __name__ == "__main__":
