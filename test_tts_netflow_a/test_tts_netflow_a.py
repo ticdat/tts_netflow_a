@@ -27,6 +27,24 @@ class TestNetflow(unittest.TestCase):
         # Objective = 270 can be read directly from https://bit.ly/3uLt01I
         self.assertTrue(_nearly_same(270, sln.parameters["Total Cost"]["Value"]))
 
+    def test_standard_data_set(self):
+        dat = get_test_data("sample_data.json")
+        sln = tts_netflow_a.solve(dat)
+        self.assertTrue(_nearly_same(5500.0, sln.parameters["Total Cost"]["Value"], epsilon=1e-4))
+
+    def test_sloan_data_set(self):
+        # This data set was pulled from this MIT Sloan School of Management example problem here https://bit.ly/3254VpT
+        dat = get_test_data("sloan_data_set.json")
+        sln = tts_netflow_a.solve(dat)
+        self.assertTrue({k: v["Quantity"] for k,v in sln.flow.items()} ==
+            {(2, 3, 2): 2.0,
+             (2, 2, 5): 2.0,
+             (2, 5, 6): 2.0,
+             (1, 1, 2): 3.0,
+             (1, 2, 5): 3.0,
+             (1, 5, 4): 3.0,
+             (1, 1, 4): 2.0})
+
 # Run the tests via the command line
 if __name__ == "__main__":
     unittest.main()
