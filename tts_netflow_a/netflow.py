@@ -59,8 +59,7 @@ def solve(dat):
 
     mdl = gu.Model("netflow")
 
-    flow = {(h, i, j): mdl.addVar(name=f"flow_{h}_{i}_{j}")
-            for h, i, j in dat.cost if (i,j) in dat.arcs}
+    flow = {(h, i, j): mdl.addVar(name=f"flow_{h}_{i}_{j}") for h, i, j in dat.cost}
 
     flowslice = Slicer(flow)
 
