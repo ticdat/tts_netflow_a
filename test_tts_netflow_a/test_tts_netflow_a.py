@@ -2,6 +2,7 @@ import os
 import inspect
 import tts_netflow_a
 import unittest
+import collections
 
 def _this_directory() :
     return os.path.dirname(os.path.realpath(os.path.abspath(inspect.getsourcefile(_this_directory))))
@@ -44,6 +45,23 @@ class TestNetflow(unittest.TestCase):
              (1, 2, 5): 3.0,
              (1, 5, 4): 3.0,
              (1, 1, 4): 2.0})
+
+    def test_issue_2(self):
+        # I see no problem in refering to GitHub issue numbers in code. Saves a lot of typing.
+        dat = get_test_data("sample_data.json")
+        sln = tts_netflow_a.solve(dat)
+        arc_flows = collections.defaultdict(float)
+        for k, v in sln.flow.items():
+            arc_flows[k[1:]] += v["Quantity"]
+        # remove the least import arc record from the input data
+        dat.arcs.pop(sorted(arc_flows, key=lambda x: arc_flows[x])[0])
+        # if cost is a compound FK into arcs, then there should now be FK failures
+        ex = []
+        try:
+            tts_netflow_a.solve(dat)
+        except AssertionError as e: # safe to assume unit tests aren't run with asserts disabled
+            ex.append(e)
+        self.assertTrue(ex and 'foreign key check' == str(ex[0]))
 
 # Run the tests via the command line
 if __name__ == "__main__":
