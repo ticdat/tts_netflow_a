@@ -61,7 +61,7 @@ class TestNetflow(unittest.TestCase):
             tts_netflow_a.solve(dat)
         except AssertionError as e: # safe to assume unit tests aren't run with asserts disabled
             ex.append(e)
-        self.assertTrue(ex and 'foreign key check' == ex[0])
+        self.assertTrue(ex and 'foreign key check' == str(ex[0]))
 
 # Run the tests via the command line
 if __name__ == "__main__":
