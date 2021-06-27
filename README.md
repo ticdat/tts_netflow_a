@@ -1,4 +1,11 @@
-# tts_netflow_a
+### tts_netflow_a
+
+Usage:
+
+```
+    python -m tts_netflow_a -i input.xlsx -o solution.xlsx
+```
+
 Multi-commodity network flow Tidy, Tested, Safe demonstration repository. 
 We demonstrate the Agile development process with three releases that advance functionality or fix bugs.
   1. [0.0.1](https://github.com/ticdat/tts_netflow_a/releases/tag/0.0.1) release solves a simple min cost 
