@@ -8,6 +8,7 @@ except:
     gu = None
 from ticdat import TicDatFactory, Slicer
 
+from tts_netflow_a.tooltips import input_schema_tooltips, solution_schema_tooltips
 # ------------------------ define the input schema --------------------------------
 input_schema = TicDatFactory (
     commodities=[["Name"], ["Volume"]],
@@ -16,6 +17,8 @@ input_schema = TicDatFactory (
     cost=[["Commodity", "Source", "Destination"], ["Cost"]],
     inflow=[["Commodity", "Node"], ["Quantity"]]
 )
+for (tbl, fld), tip in input_schema_tooltips.items():
+    input_schema.set_tooltip(tbl, fld, tip)
 
 # Define the foreign key relationships
 input_schema.add_foreign_key("arcs", "nodes", ['Source', 'Name'])
@@ -44,6 +47,8 @@ input_schema.set_default_value("arcs", "Capacity", float("inf"))
 solution_schema = TicDatFactory(
         flow=[["Commodity", "Source", "Destination"], ["Quantity"]],
         parameters=[["Parameter"], ["Value"]])
+for (tbl, fld), tip in solution_schema_tooltips.items():
+    solution_schema.set_tooltip(tbl, fld, tip)
 # ---------------------------------------------------------------------------------
 
 # ------------------------ solving section-----------------------------------------

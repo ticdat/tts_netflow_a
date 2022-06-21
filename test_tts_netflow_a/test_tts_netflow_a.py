@@ -3,6 +3,7 @@ import inspect
 import tts_netflow_a
 import unittest
 import collections
+import math
 
 def _this_directory() :
     return os.path.dirname(os.path.realpath(os.path.abspath(inspect.getsourcefile(_this_directory))))
@@ -14,24 +15,18 @@ def get_test_data(data_set_name):
     if os.path.isfile(path):
         return tts_netflow_a.input_schema.json.create_tic_dat(path)
 
-def _nearly_same(x, y, epsilon=1e-5):
-    if x == y or max(abs(x), abs(y)) < epsilon:
-        return True
-    if min(abs(x), abs(y)) > epsilon:
-        return abs(x-y) /  min(abs(x), abs(y)) < epsilon
-
 class TestNetflow(unittest.TestCase):
     def test_netflow_flows_figure_5(self):
         # Pulled from here https://bit.ly/3uLt01I (originally from Ahuja, Magnanti, and Orlin book 1993)
         dat = get_test_data("netflow_flows_figure_5.json")
         sln = tts_netflow_a.solve(dat)
         # Objective = 270 can be read directly from https://bit.ly/3uLt01I
-        self.assertTrue(_nearly_same(270, sln.parameters["Total Cost"]["Value"]))
+        self.assertTrue(math.isclose(270, sln.parameters["Total Cost"]["Value"], rel_tol=1e-5))
 
     def test_standard_data_set(self):
         dat = get_test_data("sample_data.json")
         sln = tts_netflow_a.solve(dat)
-        self.assertTrue(_nearly_same(5500.0, sln.parameters["Total Cost"]["Value"], epsilon=1e-4))
+        self.assertTrue(math.isclose(5500.0, sln.parameters["Total Cost"]["Value"], rel_tol=1e-5))
 
     def test_sloan_data_set(self):
         # This data set was pulled from this MIT Sloan School of Management example problem here https://bit.ly/3254VpT
